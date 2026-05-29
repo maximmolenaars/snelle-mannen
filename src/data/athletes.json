@@ -1,0 +1,114 @@
+{
+  "events": [
+    { "id": "60", "name": "60 Meter", "short": "60", "group": "sprint" },
+    { "id": "100m", "name": "100 Meter", "short": "100", "group": "sprint" },
+    { "id": "150m", "name": "150 Meter", "short": "150", "group": "sprint" },
+    { "id": "200m", "name": "200 Meter", "short": "200", "group": "sprint" },
+    { "id": "400m", "name": "400 Meter", "short": "400", "group": "sprint" },
+    { "id": "800m", "name": "800 Meter", "short": "800", "group": "middle" }
+  ],
+  "athletes": [
+    {
+      "id": "maxim-molenaars",
+      "name": "Maxim Molenaars",
+      "initials": "MM",
+      "birthYear": 1994,
+      "squad": "Haarlem Atletiek",
+      "results": [
+        { "event": "100m", "time": 11.84, "date": "2024-08-30", "meet": "Utrecht" },
+        { "event": "150m", "time": 19.45, "date": "2023-03-23", "meet": "Haarlem" },
+        { "event": "200m", "time": 25.30, "date": "2021-05-08", "meet": "Haarlem" },
+        { "event": "400m", "time": 59.98, "date": "2025-03-22", "meet": "Haarlem" }
+      ]
+    },
+    {
+      "id": "joey-timmerman",
+      "name": "Joey Timmerman",
+      "initials": "JT",
+      "birthYear": 1994,
+      "squad": "Haarlem Atletiek",
+      "results": [
+        { "event": "60", "time": 7.63, "date": "2025-01-05", "meet": "Assendelft" },
+        { "event": "150m", "time": 18.43, "date": "2024-03-23", "meet": "Haarlem" },
+        { "event": "100m", "time": 11.32, "date": "2024-08-30", "meet": "Utrecht" },
+        { "event": "200m", "time": 24.21, "date": "2022-07-24", "meet": "Haarlem" }
+      ]
+    },
+    {
+      "id": "angelo-lolis",
+      "name": "Angelo Lolis",
+      "initials": "AL",
+      "birthYear": 1995,
+      "squad": "Haarlem Atletiek",
+      "results": [
+        { "event": "60", "time": 7.72, "date": "2026-02-15", "meet": "Amsterdam" },
+        { "event": "100m", "time": 12.01, "date": "2025-08-10", "meet": "Haarlem" },
+        { "event": "200m", "time": 24.41, "date": "2025-05-18", "meet": "Beverwijk" },
+        { "event": "400m", "time": 57.32, "date": "2026-03-29", "meet": "Haarlem" }
+      ]
+    },
+    {
+      "id": "roeland-heitkoning",
+      "name": "Roeland Heitköning",
+      "initials": "RH",
+      "birthYear": 1999,
+      "squad": "Haarlem Atletiek",
+      "results": [
+        { "event": "60", "time": 7.18, "date": "2020-02-29", "meet": "Apeldoorn" },
+        { "event": "100m", "time": 11.25, "date": "2020-08-09", "meet": "Haarlem" },
+        { "event": "150m", "time": 16.64, "date": "2022-03-27", "meet": "Haarlem" },
+        { "event": "200m", "time": 22.16, "date": "2021-07-04", "meet": "Alphen aan de Rijn" },
+        { "event": "400m", "time": 48.94, "date": "2023-06-10", "meet": "Leiden" },
+        { "event": "800m", "time": 126.96, "date": "2025-05-31", "meet": "NK Series" }
+      ]
+    },
+    {
+      "id": "wessel-kruin",
+      "name": "Wessel Kruin",
+      "initials": "WK",
+      "birthYear": 2000,
+      "squad": "Haarlem Atletiek",
+      "results": [
+        { "event": "60", "time": 7.40, "date": "2025-12-13", "meet": "Assendelft" },
+        { "event": "100m", "time": 11.54, "date": "2026-05-17", "meet": "Alkmaar" },
+        { "event": "200m", "time": 23.74, "date": "2025-05-18", "meet": "Almere" },
+        { "event": "400m", "time": 54.94, "date": "2026-03-29", "meet": "Haarlem" },
+        { "event": "800m", "time": 137.65, "date": "2020-09-20", "meet": "Haarlem" }
+      ]
+    },
+    {
+      "id": "stijn-leidelmeyer",
+      "name": " Stijn Leidelmeyer",
+      "initials": "SL",
+      "birthYear": 2000,
+      "squad": "Haarlem Atletiek",
+      "results": [
+        { "event": "100m", "time": 13.09, "date": "2025-03-22", "meet": "Haarlem" },
+        { "event": "150m", "time": 19.71, "date": "2025-03-22", "meet": "Haarlem" },
+        { "event": "400m", "time": 63.16, "date": "2026-03-29", "meet": "Haarlem" }
+      ]
+    },
+    {
+      "id": "joran-hoek",
+      "name": "Joran Hoek",
+      "initials": "JH",
+      "birthYear": 1992,
+      "squad": "Haarlem Atletiek",
+      "results": [
+        { "event": "100m", "time": 12.03, "date": "2016-06-11", "meet": "Groningen" },
+        { "event": "200m", "time": 24.70, "date": "2015-04-19", "meet": "Almelo" },
+        { "event": "800m", "time": 168.02, "date": "2021-10-03", "meet": "Haarlem" }
+      ]
+    },
+    {
+      "id": "faber-gubbels",
+      "name": "Faber Gubbels",
+      "initials": "FG",
+      "birthYear": 2006,
+      "squad": "Haarlem Atletiek",
+      "results": [
+        { "event": "100m", "time": 12.41, "date": "2025-06-04", "meet": "Castricum" }
+      ]
+    }
+  ]
+}

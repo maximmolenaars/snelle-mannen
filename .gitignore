@@ -1,0 +1,17 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vite
+.vercel
+
+# TypeScript build artifacts
+*.tsbuildinfo
+
+# Emitted from vite.config.ts by the composite tsconfig
+vite.config.js
+vite.config.d.ts
+
+# Local Claude Code settings
+.claude/settings.local.json

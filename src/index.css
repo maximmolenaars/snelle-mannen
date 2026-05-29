@@ -1,0 +1,910 @@
+/* ============================================================
+   SNELLE MANNEN — DESIGN SYSTEM
+   Dark, high-contrast, futuristic athletic brand language.
+   ============================================================ */
+
+:root {
+  --bg: #0a0a0b;
+  --bg-elev: #121214;
+  --bg-card: #161619;
+  --line: #26262b;
+  --line-soft: #1c1c20;
+  --text: #f4f4f5;
+  --text-dim: #8a8a93;
+  --text-faint: #56565e;
+
+  /* Volt — the Nike-ish electric accent */
+  --volt: #d7ff1e;
+  --volt-dim: #aacc18;
+  --magenta: #ff2d78;
+  --cyan: #19e0ff;
+  --orange: #ff6b1a;
+
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 18px;
+
+  --display: 'Anton', 'Arial Narrow', sans-serif;
+  --body: 'Archivo', system-ui, sans-serif;
+  --mono: 'Space Mono', ui-monospace, monospace;
+
+  --maxw: 1180px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Subtle grid + glow backdrop */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 20%, transparent 75%);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--volt);
+  color: #000;
+}
+
+/* ---------- Typography utilities ---------- */
+.display {
+  font-family: var(--display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.9;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  font-family: var(--body);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* ---------- Layout shell ---------- */
+.shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- Top nav ---------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(14px);
+  background: rgba(10, 10, 11, 0.72);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-inner {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--display);
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.brand .bolt {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 0 8px rgba(215, 255, 30, 0.6));
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.nav-link {
+  padding: 9px 16px;
+  border-radius: var(--r-sm);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  transition: color 0.15s, background 0.15s;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  background: var(--bg-card);
+}
+
+.nav-link.active {
+  color: #000;
+  background: var(--volt);
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 70px 0 50px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+
+.hero h1 {
+  font-family: var(--display);
+  text-transform: uppercase;
+  font-size: clamp(56px, 13vw, 168px);
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+}
+
+.hero h1 .stroke {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--text);
+}
+
+.hero h1 .volt {
+  color: var(--volt);
+}
+
+.hero-sub {
+  margin-top: 22px;
+  max-width: 540px;
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.hero-stats {
+  margin-top: 38px;
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.hero-stat .num {
+  font-family: var(--display);
+  font-size: 44px;
+  line-height: 1;
+}
+
+.hero-stat .lbl {
+  margin-top: 6px;
+}
+
+/* ---------- Section headers ---------- */
+.section {
+  padding: 56px 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.section-head h2 {
+  font-family: var(--display);
+  text-transform: uppercase;
+  font-size: clamp(30px, 5vw, 52px);
+  line-height: 0.9;
+}
+
+/* ---------- Event tabs / chips ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--bg-card);
+  color: var(--text-dim);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+
+.chip:hover {
+  border-color: var(--text-faint);
+  color: var(--text);
+}
+
+.chip.active {
+  background: var(--volt);
+  border-color: var(--volt);
+  color: #000;
+}
+
+.chip:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+/* ---------- Leaderboard table ---------- */
+.board {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--bg-elev);
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line-soft);
+  transition: background 0.15s;
+}
+
+.board-row:last-child {
+  border-bottom: none;
+}
+
+.board-row.head {
+  background: var(--bg);
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.board-row.head span {
+  font-size: 11px;
+}
+
+.board-row.clickable:hover {
+  background: var(--bg-card);
+}
+
+.rank {
+  font-family: var(--display);
+  font-size: 30px;
+  color: var(--text-faint);
+  line-height: 1;
+}
+
+.board-row.r1 .rank {
+  color: var(--volt);
+}
+.board-row.r2 .rank {
+  color: #cfd3da;
+}
+.board-row.r3 .rank {
+  color: var(--orange);
+}
+
+.athlete-cell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-size: 16px;
+  color: #000;
+  background: var(--volt);
+}
+
+.athlete-name {
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.athlete-meta {
+  color: var(--text-faint);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.time {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+.board-row.r1 .time {
+  color: var(--volt);
+}
+
+.gap {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text-faint);
+  text-align: right;
+  min-width: 64px;
+}
+
+.record-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--volt);
+  margin-left: 8px;
+}
+
+/* ---------- Records grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.rec-card {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 22px;
+  background: linear-gradient(155deg, var(--bg-card), var(--bg-elev));
+  overflow: hidden;
+  transition: transform 0.18s, border-color 0.18s;
+}
+
+.rec-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--text-faint);
+}
+
+.rec-card .ev {
+  font-family: var(--display);
+  font-size: 40px;
+  line-height: 0.9;
+}
+
+.rec-card .ev small {
+  font-size: 16px;
+  color: var(--text-dim);
+}
+
+.rec-card .rec-time {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 32px;
+  color: var(--volt);
+  margin-top: 18px;
+}
+
+.rec-card .rec-holder {
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.rec-card .rec-when {
+  color: var(--text-faint);
+  font-size: 12px;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Athlete cards ---------- */
+.ath-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 18px 20px;
+  background: var(--bg-card);
+  transition: transform 0.16s, border-color 0.16s;
+}
+
+.ath-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--volt);
+}
+
+.ath-card .avatar {
+  width: 54px;
+  height: 54px;
+  font-size: 20px;
+}
+
+.ath-card .pbs {
+  margin-left: auto;
+  display: flex;
+  gap: 18px;
+}
+
+.pb {
+  text-align: right;
+}
+
+.pb .pb-ev {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 700;
+}
+
+.pb .pb-time {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* ---------- Athlete detail ---------- */
+.detail-hero {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding: 48px 0 36px;
+  border-bottom: 1px solid var(--line);
+}
+
+.detail-hero .avatar {
+  width: 92px;
+  height: 92px;
+  font-size: 34px;
+}
+
+.detail-hero h1 {
+  font-family: var(--display);
+  font-size: clamp(40px, 8vw, 76px);
+  text-transform: uppercase;
+  line-height: 0.88;
+}
+
+.pb-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.pb-strip .cell {
+  background: var(--bg-elev);
+  padding: 22px;
+}
+
+.pb-strip .cell .ev {
+  font-family: var(--display);
+  font-size: 24px;
+  color: var(--text-dim);
+}
+
+.pb-strip .cell .t {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 26px;
+  margin-top: 8px;
+}
+
+.pb-strip .cell .t.none {
+  color: var(--text-faint);
+  font-size: 18px;
+}
+
+/* ---------- Deltas page ---------- */
+.delta-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.chart-wrap {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--bg-elev);
+  padding: 28px 20px 12px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 0 8px;
+}
+
+.legend .item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.legend .swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+/* ---------- Track gap visualisation ---------- */
+.track {
+  position: relative;
+  width: 100%;
+  height: clamp(580px, 78vh, 860px);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent calc(12.5% - 1px),
+      rgba(255, 255, 255, 0.05) calc(12.5% - 1px),
+      rgba(255, 255, 255, 0.05) 12.5%
+    ),
+    linear-gradient(180deg, #0d0d0f 0%, #17171a 55%, #0f0f11 100%);
+}
+
+/* edge kerbs */
+.track::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(215, 255, 30, 0.12),
+    transparent 5%,
+    transparent 95%,
+    rgba(215, 255, 30, 0.12)
+  );
+  pointer-events: none;
+}
+
+.finish {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  background: repeating-linear-gradient(90deg, #f4f4f5 0 13px, #0a0a0b 13px 26px);
+  opacity: 0.92;
+  z-index: 2;
+}
+
+.finish-tag {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: var(--text-dim);
+}
+
+.track-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text-faint);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 13px;
+}
+
+.runner {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  transition: top 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), left 0.45s ease;
+  z-index: 3;
+}
+
+/* avatar pin — circle with the athlete's initials */
+.pin-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--c);
+  color: #000;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-size: 24px;
+  letter-spacing: 0.01em;
+  border: 2px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
+}
+
+.runner.leader .pin-avatar {
+  border-color: var(--volt);
+  box-shadow: 0 0 0 3px var(--volt), 0 0 30px rgba(215, 255, 30, 0.5),
+    0 10px 24px rgba(0, 0, 0, 0.6);
+}
+
+.pin-time {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  background: rgba(10, 10, 11, 0.82);
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.runner.leader .pin-time {
+  color: var(--volt);
+  border-color: rgba(215, 255, 30, 0.4);
+}
+
+.pin-name {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Head-to-head delta bars */
+.h2h {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--bg-elev);
+  overflow: hidden;
+  margin-top: 18px;
+}
+
+.h2h-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 90px;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.h2h-row:last-child {
+  border-bottom: none;
+}
+
+.h2h-ev {
+  font-family: var(--display);
+  font-size: 28px;
+}
+
+.h2h-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.h2h-bar-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.h2h-bar {
+  height: 26px;
+  border-radius: 5px;
+  min-width: 4px;
+  opacity: 0.5;
+  transition: width 0.5s ease, opacity 0.3s ease;
+}
+
+/* the faster athlete's bar — longer and fully lit */
+.h2h-bar.win {
+  opacity: 1;
+  box-shadow: 0 0 16px -2px currentColor;
+}
+
+.h2h-bar-time {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 15px;
+  width: 64px;
+  flex: none;
+}
+
+.h2h-bar-name {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  width: 130px;
+  flex: none;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.h2h-delta {
+  text-align: right;
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+.h2h-delta .d {
+  font-size: 20px;
+}
+
+.h2h-delta .l {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+
+/* ---------- Select ---------- */
+.select {
+  appearance: none;
+  background: var(--bg-card)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a8a93' d='M1 1l5 5 5-5'/%3E%3C/svg%3E")
+    no-repeat right 16px center;
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: var(--body);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 13px 42px 13px 16px;
+  border-radius: var(--r-sm);
+  min-width: 220px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--volt);
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding: 30px 0;
+  color: var(--text-faint);
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ---------- Tooltip (recharts) ---------- */
+.rc-tooltip {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  font-size: 13px;
+}
+
+.rc-tooltip .tt-name {
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.rc-tooltip .tt-row {
+  font-family: var(--mono);
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 720px) {
+  .nav-inner {
+    gap: 12px;
+  }
+  .brand {
+    font-size: 18px;
+  }
+  .nav-link {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  .board-row {
+    grid-template-columns: 44px 1fr auto;
+    padding: 14px 16px;
+    gap: 10px;
+  }
+  .gap {
+    display: none;
+  }
+  .ath-card .pbs .pb:nth-child(n + 3) {
+    display: none;
+  }
+  .h2h-row {
+    grid-template-columns: 60px 1fr 72px;
+    padding: 16px;
+  }
+  .h2h-bar-name {
+    display: none;
+  }
+}
