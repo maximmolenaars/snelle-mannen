@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ATHLETES,
   EVENTS,
@@ -50,6 +50,47 @@ export default function Deltas() {
     const left = LANES[i % LANES.length]
     return { ...row, delta, top, left }
   })
+
+  // --- Full-screen "true distance" view -------------------------------------
+  // Convert each time gap into the real distance (in metres) the athlete would
+  // be behind P1 at the moment P1 crosses the line: gap_m = leaderSpeed * delta.
+  const [expanded, setExpanded] = useState(false)
+  const evRef = EVENTS.find((e) => e.id === event)!
+  const raceMeters = parseFloat(evRef.short) || 0
+  const leaderSpeed = leader ? raceMeters / leader.result.time : 0 // m/s
+
+  const PX_PER_M = 70 // vertical scale of the expanded track
+  const LEADER_Y = 150 // px from the top where the finish line / P1 sits
+
+  const placedTrue = rows.map((row, i) => {
+    const delta = row.result.time - leader.result.time
+    const metres = leaderSpeed * delta
+    const y = LEADER_Y + metres * PX_PER_M
+    const left = LANES[i % LANES.length]
+    return { ...row, delta, metres, y, left }
+  })
+  const maxMetres = placedTrue.length
+    ? placedTrue[placedTrue.length - 1].metres
+    : 0
+  const trackTall = LEADER_Y + maxMetres * PX_PER_M + 200
+
+  // Distance gridlines every "step" metres.
+  const gridStep =
+    maxMetres <= 4 ? 1 : maxMetres <= 12 ? 2 : maxMetres <= 30 ? 5 : maxMetres <= 80 ? 10 : 25
+  const gridLines: number[] = []
+  for (let m = gridStep; m <= maxMetres + gridStep; m += gridStep) gridLines.push(m)
+
+  // Close the modal on Escape.
+  useEffect(() => {
+    if (!expanded) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setExpanded(false)
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [expanded])
 
   // Head-to-head: pick any two athletes, compared across every event.
   const [aId, setAId] = useState(ATHLETES[0].id)
@@ -143,6 +184,19 @@ export default function Deltas() {
             Finish · {ev.name} — lower is faster
           </div>
 
+          {placed.length > 0 && (
+            <button
+              className="track-expand"
+              onClick={() => setExpanded(true)}
+              title="Open full-screen true-distance view"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+              </svg>
+              Expand
+            </button>
+          )}
+
           {placed.length === 0 && (
             <div className="track-empty">Select athletes with a {ev.short}m time</div>
           )}
@@ -163,6 +217,69 @@ export default function Deltas() {
             </div>
           ))}
         </div>
+
+        {/* Full-screen true-distance view */}
+        {expanded && (
+          <div className="track-modal" role="dialog" aria-modal="true">
+            <div className="track-modal-head">
+              <div>
+                <div className="eyebrow">True Distance · gap behind P1 in metres</div>
+                <h3 className="display">{evRef.name}</h3>
+              </div>
+              <button
+                className="track-modal-close"
+                onClick={() => setExpanded(false)}
+                aria-label="Close"
+                title="Close (Esc)"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="track-modal-scroll">
+              <div className="track track-tall" style={{ height: trackTall }}>
+                {/* finish line sits where P1 crossed (0 m) */}
+                <div className="finish" style={{ top: LEADER_Y, transform: 'translateY(-50%)' }} />
+                <div
+                  className="dist-label finish-zero"
+                  style={{ top: LEADER_Y }}
+                >
+                  0 m · P1
+                </div>
+
+                {/* distance gridlines */}
+                {gridLines.map((m) => (
+                  <div key={m} className="dist-grid" style={{ top: LEADER_Y + m * PX_PER_M }}>
+                    <span className="dist-grid-label">{m} m</span>
+                  </div>
+                ))}
+
+                {placedTrue.map((p, i) => (
+                  <div
+                    key={p.athlete.id}
+                    className={'runner' + (i === 0 ? ' leader' : '')}
+                    style={{ top: p.y, left: `${p.left}%`, ['--c' as string]: colorOf(p.athlete.id) }}
+                  >
+                    <div className="pin-avatar" title={p.athlete.name}>
+                      {p.athlete.initials}
+                    </div>
+                    <div className="pin-time">
+                      {i === 0 ? formatTime(p.result.time) : `+ ${p.delta.toFixed(3)}`}
+                    </div>
+                    <div className="pin-name">
+                      {p.athlete.name}
+                      {i > 0 && (
+                        <span className="pin-metres"> · {p.metres.toFixed(2)} m back</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Head-to-head across all events */}
         <div className="section-head" style={{ marginTop: 56 }}>
