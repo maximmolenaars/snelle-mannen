@@ -121,7 +121,18 @@
       "birthYear": 1982,
       "squad": "Haarlem Atletiek",
       "results": [
+        { "event": "60", "time": 8.51, "date": "1995-01-01", "meet": "Haarlem" },
         { "event": "100m", "time": 12.10, "date": "2008-01-01", "meet": "Haarlem" }
+      ]
+    },
+    {
+      "id": "faber-gubbels",
+      "name": "Faber Gubbels",
+      "initials": "FG",
+      "birthYear": 2006,
+      "squad": "Haarlem Atletiek",
+      "results": [
+        { "event": "100m", "time": 12.41, "date": "2025-06-04", "meet": "Castricum" }
       ]
     }
   ]
