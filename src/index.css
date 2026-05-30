@@ -368,6 +368,62 @@ button {
   min-width: 0;
 }
 
+/* Top-3 medal badge */
+.medal {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  margin-right: 9px;
+  vertical-align: -5px;
+  font-family: var(--display);
+  font-size: 12px;
+  line-height: 1;
+  color: #2a2204;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.45),
+    0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+.medal-1 {
+  background: linear-gradient(150deg, #ffe680, #e3a008);
+}
+
+.medal-2 {
+  background: linear-gradient(150deg, #f2f4f8, #a6adba);
+}
+
+.medal-3 {
+  background: linear-gradient(150deg, #f0b07e, #b56a2e);
+  color: #2a1606;
+}
+
+/* medal tally under the athlete name */
+.medal-tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.tally-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--text);
+}
+
+.medal-tally .medal {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+  margin-right: 0;
+  vertical-align: baseline;
+}
+
 .avatar {
   width: 44px;
   height: 44px;
@@ -544,6 +600,132 @@ button {
   width: 92px;
   height: 92px;
   font-size: 34px;
+}
+
+/* ---------- Sprint-king avatar (champ) ---------- */
+.detail-hero .avatar.champ {
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 0 0 3px var(--volt), 0 0 26px rgba(215, 255, 30, 0.45);
+}
+
+/* moving shine, clipped to the circle */
+.avatar-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.avatar-shine::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 55%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.92),
+    transparent
+  );
+  transform: rotate(18deg) translateX(-260%);
+  animation: avatarShine 3.6s ease-in-out infinite;
+}
+
+@keyframes avatarShine {
+  0%,
+  55% {
+    transform: rotate(18deg) translateX(-260%);
+  }
+  100% {
+    transform: rotate(18deg) translateX(520%);
+  }
+}
+
+/* victory ribbon pinned to the avatar's bottom-right */
+.avatar-ribbon {
+  position: absolute;
+  right: -10px;
+  bottom: -16px;
+  z-index: 3;
+  transform-origin: top center;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55));
+  animation: ribbonBob 2.8s ease-in-out infinite;
+}
+
+.avatar-ribbon svg {
+  display: block;
+  width: 34px;
+  height: 48px;
+}
+
+@keyframes ribbonBob {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+/* ---------- Glitch name ---------- */
+.glitch-name {
+  position: relative;
+}
+
+.glitch-name.on {
+  animation: glitchShift 0.45s steps(3) 1;
+}
+
+.glitch-name.on::before,
+.glitch-name.on::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.glitch-name.on::before {
+  color: var(--cyan);
+  clip-path: inset(0 0 58% 0);
+  animation: glitchA 0.45s steps(2) 1;
+}
+
+.glitch-name.on::after {
+  color: var(--magenta);
+  clip-path: inset(56% 0 0 0);
+  animation: glitchB 0.45s steps(2) 1;
+}
+
+@keyframes glitchShift {
+  0% { transform: none; }
+  20% { transform: translateX(-3px) skewX(-4deg); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-1px) skewX(2deg); }
+  100% { transform: none; }
+}
+
+@keyframes glitchA {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(-5px); }
+  60% { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes glitchB {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
 }
 
 .detail-hero h1 {
