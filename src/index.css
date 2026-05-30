@@ -602,8 +602,8 @@ button {
   font-size: 34px;
 }
 
-/* ---------- Sprint-king avatar (champ) ---------- */
-.detail-hero .avatar.champ {
+/* ---------- Champion avatar (champ) ---------- */
+.avatar.champ {
   position: relative;
   overflow: visible;
   box-shadow: 0 0 0 3px var(--volt), 0 0 26px rgba(215, 255, 30, 0.45);
@@ -661,6 +661,21 @@ button {
   display: block;
   width: 34px;
   height: 48px;
+}
+
+/* smaller ribbon for the compact leaderboard-row avatars */
+.athlete-cell .avatar-ribbon {
+  right: -7px;
+  bottom: -10px;
+}
+
+.athlete-cell .avatar-ribbon svg {
+  width: 22px;
+  height: 31px;
+}
+
+.athlete-cell .avatar.champ {
+  box-shadow: 0 0 0 2px var(--volt), 0 0 16px rgba(215, 255, 30, 0.45);
 }
 
 @keyframes ribbonBob {

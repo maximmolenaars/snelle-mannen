@@ -9,6 +9,7 @@ import {
   formatTime,
   leaderboardFor,
 } from '../data/athletes'
+import { ChampionFx, GlitchName } from '../components/Champion'
 
 export default function Leaderboard() {
   const [event, setEvent] = useState<EventId>('100m')
@@ -140,10 +141,17 @@ export default function Leaderboard() {
                 >
                   <div className="rank">{String(i + 1).padStart(2, '0')}</div>
                   <div className="athlete-cell">
-                    <div className="avatar">{row.athlete.initials}</div>
+                    <div className={'avatar' + (i === 0 ? ' champ' : '')}>
+                      {row.athlete.initials}
+                      {i === 0 && <ChampionFx />}
+                    </div>
                     <div style={{ minWidth: 0 }}>
                       <div className="athlete-name">
-                        {row.athlete.name}
+                        {i === 0 ? (
+                          <GlitchName name={row.athlete.name} />
+                        ) : (
+                          row.athlete.name
+                        )}
                         {i === 0 && (
                           <span className="record-flag">★ Record</span>
                         )}
