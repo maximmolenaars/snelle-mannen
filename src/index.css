@@ -1263,6 +1263,38 @@ button {
   background: rgba(255, 255, 255, 0.3);
 }
 
+/* distance markers (horizontal) */
+.race-ruler-row {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  height: 15px;
+}
+
+.race-ruler-strip {
+  position: relative;
+  height: 100%;
+}
+
+.ruler-label {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.strip-grid {
+  position: absolute;
+  top: 14%;
+  bottom: 14%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 0;
+}
+
 .race-finish {
   position: absolute;
   left: 92%;
@@ -1472,6 +1504,26 @@ button {
   top: calc(15% - 24px);
   left: 14px;
   z-index: 2;
+}
+
+/* distance markers (vertical / mobile) */
+.vrace-grid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  z-index: 0;
+}
+
+.vrace-grid-label {
+  position: absolute;
+  left: 8px;
+  top: -8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  background: rgba(10, 10, 11, 0.6);
+  padding: 0 4px;
 }
 
 .vrace-runner {

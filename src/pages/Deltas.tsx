@@ -526,6 +526,14 @@ function RaceView({
   const lastFinish = durMs(slowestTime)
   const GO_DELAY = 2500 // ready + set + go before the runners move
 
+  // Distance markers along the track — interval scaled to the event.
+  const gridStep =
+    meters <= 100 ? 10 : meters <= 150 ? 25 : meters <= 200 ? 40 : meters <= 400 ? 100 : meters <= 800 ? 200 : meters <= 1500 ? 500 : 1000
+  const markers: number[] = []
+  if (meters > 0) for (let m = gridStep; m < meters; m += gridStep) markers.push(m)
+  const posPct = (m: number) => 5 + (m / meters) * 87 // horizontal: 5% → 92%
+  const vPosPct = (m: number) => 86 - (m / meters) * 72 // vertical: 86% → 14%
+
   useEffect(() => {
     setPhase('ready')
     setClock(0)
@@ -633,6 +641,11 @@ function RaceView({
         <div className="vrace-track">
           <div className="vrace-finish" />
           <div className="vrace-finish-tag eyebrow">Finish</div>
+          {markers.map((m) => (
+            <div key={`g${m}`} className="vrace-grid" style={{ top: `${vPosPct(m)}%` }}>
+              <span className="vrace-grid-label">{m}m</span>
+            </div>
+          ))}
           {data.map((r, i) => (
             <div
               key={r.athlete.id}
@@ -666,12 +679,26 @@ function RaceView({
       ) : (
         /* ---------- Desktop: left-to-right lanes ---------- */
         <div className="race-lanes">
+          <div className="race-lane race-ruler-row" aria-hidden="true">
+            <div className="race-rank" />
+            <div className="race-ruler-strip">
+              {markers.map((m) => (
+                <span key={`r${m}`} className="ruler-label" style={{ left: `${posPct(m)}%` }}>
+                  {m}m
+                </span>
+              ))}
+            </div>
+            <div />
+          </div>
           {data.map((r, i) => (
             <div className="race-lane" key={r.athlete.id}>
               <div className="race-rank">{i + 1}</div>
               <div className="race-strip">
                 <span className="race-start" />
                 <span className="race-finish" />
+                {markers.map((m) => (
+                  <span key={`s${m}`} className="strip-grid" style={{ left: `${posPct(m)}%` }} />
+                ))}
                 <div
                   className={'race-runner' + (i === 0 ? ' leader' : '')}
                   style={{

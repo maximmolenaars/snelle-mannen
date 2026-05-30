@@ -8,6 +8,10 @@
     { "id": "800m", "name": "800 Meter", "short": "800", "group": "middle" },
     { "id": "5000m", "name": "5000 Meter", "short": "5000", "group": "long" }
   ],
+  "fieldEvents": [
+    { "id": "long-jump", "name": "Long Jump", "short": "LJ", "unit": "m" },
+    { "id": "high-jump", "name": "High Jump", "short": "HJ", "unit": "m" }
+  ],
   "athletes": [
     {
       "id": "maxim-molenaars",
@@ -33,6 +37,10 @@
         { "event": "150m", "time": 18.43, "date": "2024-03-23", "meet": "Haarlem" },
         { "event": "100m", "time": 11.32, "date": "2024-08-30", "meet": "Utrecht" },
         { "event": "200m", "time": 24.21, "date": "2022-07-24", "meet": "Haarlem" }
+      ],
+      "jumps": [
+        { "event": "long-jump", "mark": 6.12, "date": "2024-03-23", "meet": "Haarlem" },
+        { "event": "high-jump", "mark": 1.78, "date": "2024-03-23", "meet": "Haarlem" }
       ]
     },
     {
@@ -46,6 +54,9 @@
         { "event": "100m", "time": 12.01, "date": "2025-08-10", "meet": "Haarlem" },
         { "event": "200m", "time": 24.41, "date": "2025-05-18", "meet": "Beverwijk" },
         { "event": "400m", "time": 57.32, "date": "2026-03-29", "meet": "Haarlem" }
+      ],
+      "jumps": [
+        { "event": "long-jump", "mark": 6.30, "date": "2025-05-18", "meet": "Beverwijk" }
       ]
     },
     {
@@ -61,6 +72,10 @@
         { "event": "200m", "time": 22.16, "date": "2021-07-04", "meet": "Alphen aan de Rijn" },
         { "event": "400m", "time": 48.94, "date": "2023-06-10", "meet": "Leiden" },
         { "event": "800m", "time": 126.96, "date": "2021-10-03", "meet": "Haarlem" }
+      ],
+      "jumps": [
+        { "event": "long-jump", "mark": 6.55, "date": "2022-06-04", "meet": "Haarlem" },
+        { "event": "high-jump", "mark": 1.92, "date": "2021-07-04", "meet": "Leiden" }
       ]
     },
     {
@@ -75,6 +90,10 @@
         { "event": "200m", "time": 23.74, "date": "2025-05-18", "meet": "Almere" },
         { "event": "400m", "time": 54.94, "date": "2026-03-29", "meet": "Haarlem" },
         { "event": "800m", "time": 137.65, "date": "2020-09-20", "meet": "Haarlem" }
+      ],
+      "jumps": [
+        { "event": "long-jump", "mark": 5.98, "date": "2025-05-18", "meet": "Almere" },
+        { "event": "high-jump", "mark": 1.95, "date": "2026-03-29", "meet": "Haarlem" }
       ]
     },
     {
@@ -87,6 +106,9 @@
         { "event": "100m", "time": 13.09, "date": "2025-03-22", "meet": "Haarlem" },
         { "event": "150m", "time": 19.71, "date": "2025-03-22", "meet": "Haarlem" },
         { "event": "400m", "time": 63.16, "date": "2026-03-29", "meet": "Haarlem" }
+      ],
+      "jumps": [
+        { "event": "high-jump", "mark": 1.70, "date": "2025-03-22", "meet": "Haarlem" }
       ]
     },
     {
@@ -99,7 +121,8 @@
         { "event": "100m", "time": 12.03, "date": "2016-06-11", "meet": "Groningen" },
         { "event": "200m", "time": 24.70, "date": "2015-04-19", "meet": "Almelo" },
         { "event": "800m", "time": 168.02, "date": "2021-10-03", "meet": "Haarlem" }
-      ]
+      ],
+      "jumps": []
     },
     {
       "id": "michiel-heimgartner",
@@ -112,6 +135,9 @@
         { "event": "100m", "time": 11.85, "date": "2008-01-01", "meet": "Haarlem" },
         { "event": "400m", "time": 50.92, "date": "2008-01-01", "meet": "Haarlem" },
         { "event": "5000m", "time": 1007, "date": "2011-03-31", "meet": "Amsterdam" }
+      ],
+      "jumps": [
+        { "event": "high-jump", "mark": 1.85, "date": "2019-02-02", "meet": "Apeldoorn" }
       ]
     },
     {
@@ -123,7 +149,8 @@
       "results": [
         { "event": "60", "time": 8.51, "date": "1995-01-01", "meet": "Haarlem" },
         { "event": "100m", "time": 12.10, "date": "2008-01-01", "meet": "Haarlem" }
-      ]
+      ],
+      "jumps": []
     },
     {
       "id": "faber-gubbels",
@@ -133,7 +160,8 @@
       "squad": "Haarlem Atletiek",
       "results": [
         { "event": "100m", "time": 12.41, "date": "2025-06-04", "meet": "Castricum" }
-      ]
+      ],
+      "jumps": []
     }
   ]
 }

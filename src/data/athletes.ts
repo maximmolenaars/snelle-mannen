@@ -35,6 +35,14 @@ export interface Result {
   meet?: string
 }
 
+/** A jump mark — distance/height in METRES (higher is better). */
+export interface FieldMark {
+  event: string // field event id (e.g. "long-jump")
+  mark: number // metres
+  date: string
+  meet?: string
+}
+
 export interface Athlete {
   id: string
   name: string
@@ -45,12 +53,59 @@ export interface Athlete {
   /** Hometown / squad accent */
   squad: string
   results: Result[]
+  /** Field-event (jump) marks. Optional — omit or use [] if none. */
+  jumps?: FieldMark[]
 }
 
 
 export const EVENTS = (raw.events as TrackEvent[])
 
 export const ATHLETES = (raw.athletes as Athlete[])
+
+// -----------------------------------------------------------------------------
+//  FIELD EVENTS (jumps) — measured in metres, higher is better.
+//  Separate from the timed events so none of the race/speed logic is affected.
+// -----------------------------------------------------------------------------
+
+export interface FieldEvent {
+  id: string
+  name: string
+  short: string
+  unit: string
+}
+
+export const FIELD_EVENTS = (raw.fieldEvents as FieldEvent[]) ?? []
+
+export interface RankedMark {
+  athlete: Athlete
+  mark: number
+  date: string
+  meet?: string
+}
+
+/** Best jump per athlete for a field event, sorted furthest/highest first. */
+export function fieldLeaderboard(eventId: string): RankedMark[] {
+  const rows: RankedMark[] = []
+  for (const ath of ATHLETES) {
+    const marks = (ath.jumps ?? []).filter((j) => j.event === eventId)
+    if (marks.length === 0) continue
+    const best = marks.reduce((a, b) => (a.mark >= b.mark ? a : b))
+    rows.push({ athlete: ath, mark: best.mark, date: best.date, meet: best.meet })
+  }
+  return rows.sort((a, b) => b.mark - a.mark)
+}
+
+/** Best mark an athlete has for a field event, or undefined. */
+export function bestMark(athlete: Athlete, eventId: string): number | undefined {
+  const marks = (athlete.jumps ?? []).filter((j) => j.event === eventId)
+  if (marks.length === 0) return undefined
+  return Math.max(...marks.map((j) => j.mark))
+}
+
+/** Format a field mark in metres, e.g. 6.55 -> "6.55 m" */
+export function formatMark(metres: number): string {
+  return `${metres.toFixed(2)} m`
+}
 
 // -----------------------------------------------------------------------------
 //  DERIVED HELPERS — no need to edit below this line

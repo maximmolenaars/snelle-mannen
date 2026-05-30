@@ -4,8 +4,11 @@ import {
   ATHLETES,
   EVENTS,
   EventId,
+  FIELD_EVENTS,
   clubRecord,
+  fieldLeaderboard,
   formatDelta,
+  formatMark,
   formatTime,
   leaderboardFor,
 } from '../data/athletes'
@@ -171,6 +174,72 @@ export default function Leaderboard() {
           </div>
         </div>
       </section>
+
+      {/* Field events (jumps) — metres, higher is better */}
+      {FIELD_EVENTS.map((fe) => {
+        const rows = fieldLeaderboard(fe.id)
+        const leader = rows[0]
+        return (
+          <section className="section" style={{ paddingTop: 0 }} key={fe.id}>
+            <div className="container">
+              <div className="section-head">
+                <h2>{fe.name}</h2>
+                <span className="eyebrow">
+                  {fe.id === 'high-jump' ? 'Highest in the club' : 'Furthest in the club'}
+                </span>
+              </div>
+              <div className="board">
+                <div className="board-row head">
+                  <span className="eyebrow">Pos</span>
+                  <span className="eyebrow">Athlete</span>
+                  <span className="eyebrow" style={{ textAlign: 'right' }}>
+                    Mark
+                  </span>
+                  <span className="eyebrow gap" style={{ textAlign: 'right' }}>
+                    Gap
+                  </span>
+                </div>
+
+                {rows.length === 0 && (
+                  <div className="board-row">
+                    <span />
+                    <span style={{ color: 'var(--text-faint)' }}>No marks recorded yet.</span>
+                  </div>
+                )}
+
+                {rows.map((row, i) => {
+                  const gap = leader ? row.mark - leader.mark : 0
+                  return (
+                    <div
+                      key={row.athlete.id}
+                      className={`board-row clickable r${i + 1}`}
+                      onClick={() => navigate(`/athletes/${row.athlete.id}`)}
+                    >
+                      <div className="rank">{String(i + 1).padStart(2, '0')}</div>
+                      <div className="athlete-cell">
+                        <div className="avatar">{row.athlete.initials}</div>
+                        <div style={{ minWidth: 0 }}>
+                          <div className="athlete-name">
+                            {row.athlete.name}
+                            {i === 0 && <span className="record-flag">★ Record</span>}
+                          </div>
+                          <div className="athlete-meta">
+                            {row.athlete.squad} · {row.date}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="time" style={{ textAlign: 'right' }}>
+                        {formatMark(row.mark)}
+                      </div>
+                      <div className="gap">{i === 0 ? '—' : formatDelta(gap)}</div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+        )
+      })}
     </>
   )
 }
