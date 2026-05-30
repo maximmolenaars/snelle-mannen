@@ -16,6 +16,23 @@ const PALETTE = ['#d7ff1e', '#19e0ff', '#ff2d78', '#ff6b1a', '#a78bfa', '#34d399
 // Horizontal lanes (in %) — a centre-out zigzag so cars never stack.
 const LANES = [50, 30, 70, 22, 78, 40, 60, 50]
 
+// Confetti burst — fixed particle layout (angle/distance/colour) so it never
+// re-randomises between renders.
+const CONFETTI = Array.from({ length: 14 }, (_, k) => {
+  const angle = (k / 14) * Math.PI * 2 + (k % 2 ? 0.35 : -0.25)
+  const dist = 30 + (k % 3) * 12
+  const colors = ['#d7ff1e', '#19e0ff', '#ff2d78', '#ff6b1a', '#a78bfa', '#34d399', '#ffffff']
+  return {
+    tx: Math.round(Math.cos(angle) * dist),
+    ty: Math.round(Math.sin(angle) * dist),
+    rot: (k * 67) % 360,
+    color: colors[k % colors.length],
+    w: k % 3 === 0 ? 5 : 7,
+    h: k % 2 === 0 ? 8 : 5,
+    stagger: (k % 5) * 22,
+  }
+})
+
 // Stable colour per athlete (doesn't shift when selection changes).
 const colorOf = (id: string) =>
   PALETTE[Math.max(0, ATHLETES.findIndex((a) => a.id === id)) % PALETTE.length]
@@ -467,6 +484,28 @@ function RaceView({ rows }: { rows: RankedResult[] }) {
   const running = phase === 'run' || phase === 'done'
   const deltaText = (r: (typeof data)[number], i: number) =>
     i === 0 ? formatTime(r.result.time) : `+ ${r.delta.toFixed(3)}`
+
+  // Confetti that pops around an avatar exactly when it crosses the line.
+  const burst = (finishDelay: number) =>
+    running ? (
+      <span className="confetti" aria-hidden="true">
+        {CONFETTI.map((p, k) => (
+          <i
+            key={k}
+            className="confetti-piece"
+            style={{
+              ['--tx' as string]: `${p.tx}px`,
+              ['--ty' as string]: `${p.ty}px`,
+              ['--rot' as string]: `${p.rot}deg`,
+              background: p.color,
+              width: p.w,
+              height: p.h,
+              animationDelay: `${finishDelay + p.stagger}ms`,
+            }}
+          />
+        ))}
+      </span>
+    ) : null
   const fmtClock = (s: number) => {
     if (s >= 60) {
       const m = Math.floor(s / 60)
@@ -508,7 +547,10 @@ function RaceView({ rows }: { rows: RankedResult[] }) {
               }}
             >
               <span className="vrace-trail" />
-              <span className="race-ava">{r.athlete.initials}</span>
+              <span className="race-ava">
+                {burst(durMs(r.result.time))}
+                {r.athlete.initials}
+              </span>
               <span
                 className="vrace-delta"
                 style={{
@@ -540,7 +582,10 @@ function RaceView({ rows }: { rows: RankedResult[] }) {
                   }}
                 >
                   <span className="race-trail" />
-                  <span className="race-ava">{r.athlete.initials}</span>
+                  <span className="race-ava">
+                    {burst(durMs(r.result.time))}
+                    {r.athlete.initials}
+                  </span>
                 </div>
               </div>
               <div className="race-info">
