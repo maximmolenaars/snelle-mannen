@@ -16,6 +16,10 @@ const PALETTE = ['#d7ff1e', '#19e0ff', '#ff2d78', '#ff6b1a', '#a78bfa', '#34d399
 // Horizontal lanes (in %) — a centre-out zigzag so cars never stack.
 const LANES = [50, 30, 70, 22, 78, 40, 60, 50]
 
+// Easter egg
+const BOLT_ID = '__usain_bolt__'
+const BOLT_GOLD = '#FED100'
+
 // Confetti burst — fixed particle layout (angle/distance/colour) so it never
 // re-randomises between renders.
 const CONFETTI = Array.from({ length: 14 }, (_, k) => {
@@ -445,8 +449,58 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
     return () => mq.removeEventListener('change', onChange)
   }, [])
 
-  const leaderTime = rows[0]?.result.time ?? 0
-  const data = rows.map((r) => ({ ...r, delta: r.result.time - leaderTime }))
+  // Easter egg: drop Usain Bolt (world record) into the 100m / 200m race.
+  const boltTime = meters === 100 ? 9.58 : meters === 200 ? 19.19 : null
+  const canBolt = boltTime !== null
+  const [boltOn, setBoltOn] = useState(false)
+  const toggleBolt = () => {
+    setBoltOn((b) => !b)
+    setRunId((x) => x + 1) // restart so he lines up from the gun
+  }
+
+  const racers: RankedResult[] =
+    boltOn && boltTime != null
+      ? [
+          ...rows,
+          {
+            athlete: {
+              id: BOLT_ID,
+              name: 'Usain Bolt',
+              initials: 'UB',
+              birthYear: 1986,
+              squad: 'Jamaica',
+              results: [],
+            },
+            result: {
+              event: (meters === 100 ? '100m' : '200m') as EventId,
+              time: boltTime,
+              date: '2009-08-16',
+              meet: 'WR · Berlin',
+            },
+          },
+        ].sort((a, b) => a.result.time - b.result.time)
+      : rows
+
+  const leaderTime = racers[0]?.result.time ?? 0
+  const data = racers.map((r) => ({ ...r, delta: r.result.time - leaderTime }))
+  const raceColor = (id: string) => (id === BOLT_ID ? BOLT_GOLD : colorOf(id))
+  const avatarInner = (r: RankedResult) =>
+    r.athlete.id === BOLT_ID ? (
+      <img
+        className="bolt-img"
+        src="/usain-bolt.jpg"
+        alt="Usain Bolt"
+        onError={(e) => {
+          const t = e.currentTarget
+          if (!t.dataset.fb) {
+            t.dataset.fb = '1'
+            t.src = '/usain-bolt.svg'
+          }
+        }}
+      />
+    ) : (
+      r.athlete.initials
+    )
 
   // True time: each runner takes their actual result, sped up by the multiplier.
   const durMs = (t: number) => (t * 1000) / speed
@@ -486,8 +540,8 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
   }, [phase, slowestTime, speed])
 
   const running = phase === 'run' || phase === 'done'
-  const deltaText = (r: (typeof data)[number], i: number) =>
-    i === 0 ? formatTime(r.result.time) : `+ ${r.delta.toFixed(3)}`
+  // Results show each athlete's actual finish time.
+  const resultText = (r: (typeof data)[number]) => formatTime(r.result.time)
 
   // Confetti that pops around an avatar exactly when it crosses the line.
   const burst = (finishDelay: number) =>
@@ -540,6 +594,15 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
             {speed}×
           </button>
         )}
+        {canBolt && (
+          <button
+            className={'race-bolt' + (boltOn ? ' on' : '')}
+            onClick={toggleBolt}
+            title="Add the world record holder"
+          >
+            {boltOn ? '✓ Usain Bolt' : '⚡ Add Usain Bolt'}
+          </button>
+        )}
       </div>
 
       {vertical ? (
@@ -556,23 +619,23 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
                 left: `${50 + (((i + 0.5) / data.length) - 0.5) * 84}%`,
                 top: running ? '14%' : '86%',
                 transition: running ? `top ${durMs(r.result.time)}ms linear` : 'none',
-                ['--c' as string]: colorOf(r.athlete.id),
+                ['--c' as string]: raceColor(r.athlete.id),
               }}
             >
               <span className="vrace-trail" />
-              <span className="race-ava">
+              <span className={'race-ava' + (r.athlete.id === BOLT_ID ? ' bolt' : '')}>
                 {burst(durMs(r.result.time))}
-                {r.athlete.initials}
+                {avatarInner(r)}
               </span>
               <span
                 className="vrace-delta"
                 style={{
                   opacity: running ? 1 : 0,
                   transitionDelay: running ? `${durMs(r.result.time)}ms` : '0ms',
-                  color: i === 0 ? 'var(--volt)' : colorOf(r.athlete.id),
+                  color: i === 0 ? 'var(--volt)' : raceColor(r.athlete.id),
                 }}
               >
-                {i === 0 ? formatTime(r.result.time) : `+${r.delta.toFixed(2)}`}
+                {resultText(r)}
               </span>
             </div>
           ))}
@@ -591,13 +654,13 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
                   style={{
                     left: running ? '92%' : '5%',
                     transition: running ? `left ${durMs(r.result.time)}ms linear` : 'none',
-                    ['--c' as string]: colorOf(r.athlete.id),
+                    ['--c' as string]: raceColor(r.athlete.id),
                   }}
                 >
                   <span className="race-trail" />
-                  <span className="race-ava">
+                  <span className={'race-ava' + (r.athlete.id === BOLT_ID ? ' bolt' : '')}>
                     {burst(durMs(r.result.time))}
-                    {r.athlete.initials}
+                    {avatarInner(r)}
                   </span>
                 </div>
               </div>
@@ -608,10 +671,10 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
                   style={{
                     opacity: running ? 1 : 0,
                     transitionDelay: running ? `${durMs(r.result.time)}ms` : '0ms',
-                    color: i === 0 ? 'var(--volt)' : colorOf(r.athlete.id),
+                    color: i === 0 ? 'var(--volt)' : raceColor(r.athlete.id),
                   }}
                 >
-                  {deltaText(r, i)}
+                  {resultText(r)}
                 </div>
               </div>
             </div>
