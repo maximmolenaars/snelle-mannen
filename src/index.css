@@ -902,8 +902,34 @@ button {
 .race-clockbar {
   flex: none;
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 12px;
   padding-bottom: 16px;
+}
+
+.race-speed {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  padding: 9px 16px;
+  border-radius: 999px;
+  min-width: 54px;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.race-speed:hover {
+  border-color: var(--text-faint);
+}
+
+.race-speed.on {
+  background: var(--volt);
+  border-color: var(--volt);
+  color: #000;
 }
 
 .race-clock {

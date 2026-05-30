@@ -276,7 +276,7 @@ export default function Deltas() {
 
             <div className="track-modal-scroll">
               {racing ? (
-                <RaceView key={event} rows={rows} />
+                <RaceView key={event} rows={rows} meters={raceMeters} />
               ) : (
                 <div className="track track-tall" style={{ height: trackTall }}>
                   {/* finish line sits where P1 crossed (0 m) */}
@@ -426,10 +426,13 @@ export default function Deltas() {
 //  (an 11.25s 100m literally takes 11.25s), so the finishing gaps are the true
 //  gaps. Horizontal lanes on wide screens, bottom-to-top columns on mobile.
 // ---------------------------------------------------------------------------
-function RaceView({ rows }: { rows: RankedResult[] }) {
+function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
   const [phase, setPhase] = useState<'ready' | 'set' | 'go' | 'run' | 'done'>('ready')
   const [runId, setRunId] = useState(0)
   const [clock, setClock] = useState(0) // stopwatch seconds
+  const [speed, setSpeed] = useState(1) // playback multiplier
+  const showSpeed = meters >= 400 // long events only
+  const cycleSpeed = () => setSpeed((s) => (s >= 8 ? 1 : s * 2))
 
   // Switch to the vertical (bottom-to-top) layout on narrow screens.
   const [vertical, setVertical] = useState(
@@ -445,8 +448,8 @@ function RaceView({ rows }: { rows: RankedResult[] }) {
   const leaderTime = rows[0]?.result.time ?? 0
   const data = rows.map((r) => ({ ...r, delta: r.result.time - leaderTime }))
 
-  // True time: each runner takes their actual result, in real seconds.
-  const durMs = (t: number) => t * 1000
+  // True time: each runner takes their actual result, sped up by the multiplier.
+  const durMs = (t: number) => (t * 1000) / speed
   const slowestTime = data.length ? data[data.length - 1].result.time : 0
   const lastFinish = durMs(slowestTime)
   const GO_DELAY = 2500 // ready + set + go before the runners move
@@ -463,13 +466,14 @@ function RaceView({ rows }: { rows: RankedResult[] }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runId, lastFinish])
 
-  // Stopwatch: count up from GO, stop the instant the last athlete finishes.
+  // Stopwatch: count up from GO (sped up by the multiplier so it still shows the
+  // real race time), and freeze the instant the last athlete finishes.
   useEffect(() => {
     if (phase !== 'run') return
     const start = performance.now()
     let raf = 0
     const tick = () => {
-      const el = (performance.now() - start) / 1000
+      const el = ((performance.now() - start) / 1000) * speed
       if (el >= slowestTime) {
         setClock(slowestTime) // freeze on the last finisher
         return
@@ -479,7 +483,7 @@ function RaceView({ rows }: { rows: RankedResult[] }) {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [phase, slowestTime])
+  }, [phase, slowestTime, speed])
 
   const running = phase === 'run' || phase === 'done'
   const deltaText = (r: (typeof data)[number], i: number) =>
@@ -527,6 +531,15 @@ function RaceView({ rows }: { rows: RankedResult[] }) {
           {fmtClock(clock)}
           <span className="race-clock-unit">s</span>
         </div>
+        {showSpeed && (
+          <button
+            className={'race-speed' + (speed > 1 ? ' on' : '')}
+            onClick={cycleSpeed}
+            title="Tap to change playback speed"
+          >
+            {speed}×
+          </button>
+        )}
       </div>
 
       {vertical ? (
