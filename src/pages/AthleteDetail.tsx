@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import {
   EVENTS,
+  EVENT_MAP,
   bestTime,
   clubRecord,
   formatDelta,
@@ -120,31 +121,43 @@ export default function AthleteDetail() {
           <div className="section-head">
             <h2>Results Log</h2>
           </div>
-          <div className="board">
+          <div className="board results">
             <div className="board-row head">
               <span className="eyebrow">Event</span>
               <span className="eyebrow">Meet</span>
               <span className="eyebrow" style={{ textAlign: 'right' }}>
                 Time
               </span>
+              <span className="eyebrow" style={{ textAlign: 'right' }}>
+                Avg Speed
+              </span>
               <span className="eyebrow gap" style={{ textAlign: 'right' }}>
                 Date
               </span>
             </div>
-            {results.map((r, i) => (
-              <div className="board-row" key={i}>
-                <div className="rank" style={{ fontSize: 20 }}>
-                  {r.event}
+            {results.map((r, i) => {
+              const metres = parseFloat(EVENT_MAP[r.event].short) || 0
+              const ms = metres / r.time // metres per second
+              const kmh = ms * 3.6
+              return (
+                <div className="board-row" key={i}>
+                  <div className="rank" style={{ fontSize: 20 }}>
+                    {r.event}
+                  </div>
+                  <div className="athlete-name" style={{ fontSize: 15 }}>
+                    {r.meet ?? '—'}
+                  </div>
+                  <div className="time" style={{ textAlign: 'right', fontSize: 20 }}>
+                    {formatTime(r.time)}
+                  </div>
+                  <div className="speed">
+                    <span className="speed-main">{kmh.toFixed(1)} km/h</span>
+                    <span className="speed-sub">{ms.toFixed(2)} m/s</span>
+                  </div>
+                  <div className="gap mono">{r.date}</div>
                 </div>
-                <div className="athlete-name" style={{ fontSize: 15 }}>
-                  {r.meet ?? '—'}
-                </div>
-                <div className="time" style={{ textAlign: 'right', fontSize: 20 }}>
-                  {formatTime(r.time)}
-                </div>
-                <div className="gap mono">{r.date}</div>
-              </div>
-            ))}
+              )
+            })}
           </div>
           <Link
             to="/athletes"

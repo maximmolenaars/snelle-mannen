@@ -306,6 +306,30 @@ button {
   border-bottom: none;
 }
 
+/* Results log with an extra Avg Speed column */
+.board.results .board-row {
+  grid-template-columns: 56px 1fr auto auto auto;
+}
+
+.speed {
+  text-align: right;
+  font-family: var(--mono);
+  line-height: 1.1;
+}
+
+.speed .speed-main {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.speed .speed-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 3px;
+}
+
 .board-row.head {
   background: var(--bg);
   padding-top: 14px;
@@ -904,6 +928,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 12px;
   padding-bottom: 16px;
 }
@@ -932,7 +957,7 @@ button {
   color: #000;
 }
 
-.race-bolt {
+.race-guest {
   font-family: var(--body);
   font-weight: 800;
   font-size: 13px;
@@ -947,29 +972,19 @@ button {
   transition: color 0.15s, background 0.15s, border-color 0.15s;
 }
 
-.race-bolt:hover {
+.race-guest:hover {
   color: var(--text);
   border-color: var(--text-faint);
 }
 
-.race-bolt.on {
-  background: #fed100;
-  border-color: #fed100;
-  color: #000;
-}
-
-/* Usain Bolt avatar image */
-.race-ava.bolt {
-  background: #fed100;
-}
-
-.bolt-img {
+/* world-record guest avatar image */
+.guest-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 22%; /* frame his face in the circle */
+  object-position: 50% 22%; /* frame the face in the circle */
   border-radius: 50%;
 }
 
@@ -1469,6 +1484,12 @@ button {
     grid-template-columns: 44px 1fr auto;
     padding: 14px 16px;
     gap: 10px;
+  }
+  .board.results .board-row {
+    grid-template-columns: 40px 1fr auto auto;
+  }
+  .speed .speed-sub {
+    display: none;
   }
   .gap {
     display: none;

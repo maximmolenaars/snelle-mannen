@@ -16,9 +16,24 @@ const PALETTE = ['#d7ff1e', '#19e0ff', '#ff2d78', '#ff6b1a', '#a78bfa', '#34d399
 // Horizontal lanes (in %) — a centre-out zigzag so cars never stack.
 const LANES = [50, 30, 70, 22, 78, 40, 60, 50]
 
-// Easter egg
-const BOLT_ID = '__usain_bolt__'
-const BOLT_GOLD = '#FED100'
+// Easter egg: world-record guests you can drop into the race, by distance (m).
+const GUEST_ID = '__wr_guest__'
+interface Guest {
+  name: string
+  initials: string
+  time: number
+  img: string
+  fallback: string
+  color: string
+  textOn: string
+  date: string
+  meet: string
+}
+const WR_GUESTS: Record<number, Guest> = {
+  100: { name: 'Usain Bolt', initials: 'UB', time: 9.58, img: '/usain-bolt.jpg', fallback: '/usain-bolt.svg', color: '#FED100', textOn: '#000', date: '2009-08-16', meet: 'WR · Berlin' },
+  200: { name: 'Usain Bolt', initials: 'UB', time: 19.19, img: '/usain-bolt.jpg', fallback: '/usain-bolt.svg', color: '#FED100', textOn: '#000', date: '2009-08-20', meet: 'WR · Berlin' },
+  400: { name: 'Wayde van Niekerk', initials: 'WN', time: 43.03, img: '/wayde-van-niekerk.jpg', fallback: '/wayde-van-niekerk.svg', color: '#007A4D', textOn: '#fff', date: '2016-08-14', meet: 'WR · Rio' },
+}
 
 // Confetti burst — fixed particle layout (angle/distance/colour) so it never
 // re-randomises between renders.
@@ -280,7 +295,7 @@ export default function Deltas() {
 
             <div className="track-modal-scroll">
               {racing ? (
-                <RaceView key={event} rows={rows} meters={raceMeters} />
+                <RaceView key={event} rows={rows} meters={raceMeters} event={event} />
               ) : (
                 <div className="track track-tall" style={{ height: trackTall }}>
                   {/* finish line sits where P1 crossed (0 m) */}
@@ -430,7 +445,15 @@ export default function Deltas() {
 //  (an 11.25s 100m literally takes 11.25s), so the finishing gaps are the true
 //  gaps. Horizontal lanes on wide screens, bottom-to-top columns on mobile.
 // ---------------------------------------------------------------------------
-function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
+function RaceView({
+  rows,
+  meters,
+  event,
+}: {
+  rows: RankedResult[]
+  meters: number
+  event: EventId
+}) {
   const [phase, setPhase] = useState<'ready' | 'set' | 'go' | 'run' | 'done'>('ready')
   const [runId, setRunId] = useState(0)
   const [clock, setClock] = useState(0) // stopwatch seconds
@@ -449,52 +472,47 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
     return () => mq.removeEventListener('change', onChange)
   }, [])
 
-  // Easter egg: drop Usain Bolt (world record) into the 100m / 200m race.
-  const boltTime = meters === 100 ? 9.58 : meters === 200 ? 19.19 : null
-  const canBolt = boltTime !== null
-  const [boltOn, setBoltOn] = useState(false)
-  const toggleBolt = () => {
-    setBoltOn((b) => !b)
-    setRunId((x) => x + 1) // restart so he lines up from the gun
+  // Easter egg: drop the event's world-record holder into the race.
+  const guest = WR_GUESTS[meters]
+  const canGuest = !!guest
+  const [guestOn, setGuestOn] = useState(false)
+  const toggleGuest = () => {
+    setGuestOn((b) => !b)
+    setRunId((x) => x + 1) // restart so they line up from the gun
   }
 
   const racers: RankedResult[] =
-    boltOn && boltTime != null
+    guestOn && guest
       ? [
           ...rows,
           {
             athlete: {
-              id: BOLT_ID,
-              name: 'Usain Bolt',
-              initials: 'UB',
-              birthYear: 1986,
-              squad: 'Jamaica',
+              id: GUEST_ID,
+              name: guest.name,
+              initials: guest.initials,
+              birthYear: 0,
+              squad: '',
               results: [],
             },
-            result: {
-              event: (meters === 100 ? '100m' : '200m') as EventId,
-              time: boltTime,
-              date: '2009-08-16',
-              meet: 'WR · Berlin',
-            },
+            result: { event, time: guest.time, date: guest.date, meet: guest.meet },
           },
         ].sort((a, b) => a.result.time - b.result.time)
       : rows
 
   const leaderTime = racers[0]?.result.time ?? 0
   const data = racers.map((r) => ({ ...r, delta: r.result.time - leaderTime }))
-  const raceColor = (id: string) => (id === BOLT_ID ? BOLT_GOLD : colorOf(id))
+  const raceColor = (id: string) => (id === GUEST_ID && guest ? guest.color : colorOf(id))
   const avatarInner = (r: RankedResult) =>
-    r.athlete.id === BOLT_ID ? (
+    r.athlete.id === GUEST_ID && guest ? (
       <img
-        className="bolt-img"
-        src="/usain-bolt.jpg"
-        alt="Usain Bolt"
+        className="guest-img"
+        src={guest.img}
+        alt={guest.name}
         onError={(e) => {
           const t = e.currentTarget
           if (!t.dataset.fb) {
             t.dataset.fb = '1'
-            t.src = '/usain-bolt.svg'
+            t.src = guest.fallback
           }
         }}
       />
@@ -594,13 +612,18 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
             {speed}×
           </button>
         )}
-        {canBolt && (
+        {canGuest && guest && (
           <button
-            className={'race-bolt' + (boltOn ? ' on' : '')}
-            onClick={toggleBolt}
+            className={'race-guest' + (guestOn ? ' on' : '')}
+            onClick={toggleGuest}
             title="Add the world record holder"
+            style={
+              guestOn
+                ? { background: guest.color, borderColor: guest.color, color: guest.textOn }
+                : undefined
+            }
           >
-            {boltOn ? '✓ Usain Bolt' : '⚡ Add Usain Bolt'}
+            {guestOn ? `✓ ${guest.name}` : `+ Add ${guest.name}`}
           </button>
         )}
       </div>
@@ -623,7 +646,7 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
               }}
             >
               <span className="vrace-trail" />
-              <span className={'race-ava' + (r.athlete.id === BOLT_ID ? ' bolt' : '')}>
+              <span className={'race-ava' + (r.athlete.id === GUEST_ID ? ' guest' : '')}>
                 {burst(durMs(r.result.time))}
                 {avatarInner(r)}
               </span>
@@ -658,7 +681,7 @@ function RaceView({ rows, meters }: { rows: RankedResult[]; meters: number }) {
                   }}
                 >
                   <span className="race-trail" />
-                  <span className={'race-ava' + (r.athlete.id === BOLT_ID ? ' bolt' : '')}>
+                  <span className={'race-ava' + (r.athlete.id === GUEST_ID ? ' guest' : '')}>
                     {burst(durMs(r.result.time))}
                     {avatarInner(r)}
                   </span>
