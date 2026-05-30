@@ -860,6 +860,345 @@ button {
   border-radius: 4px;
 }
 
+/* ---------- Race mode ---------- */
+.track-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.track-race-btn {
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: var(--volt);
+  border: 1px solid var(--volt);
+  color: #000;
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: filter 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.track-race-btn:hover {
+  filter: brightness(1.08);
+}
+
+.track-race-btn.on {
+  background: var(--bg-card);
+  border-color: var(--line);
+  color: var(--text);
+}
+
+.race {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 26px 34px;
+}
+
+.race-clockbar {
+  flex: none;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 16px;
+}
+
+.race-clock {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(30px, 5vw, 46px);
+  letter-spacing: 0.01em;
+  color: var(--volt);
+  background: rgba(10, 10, 11, 0.72);
+  border: 1px solid var(--line);
+  padding: 7px 22px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+.race-clock-unit {
+  font-size: 0.5em;
+  color: var(--text-dim);
+}
+
+.race-clock.stopped {
+  color: #fff;
+  border-color: var(--volt);
+  box-shadow: 0 0 22px rgba(215, 255, 30, 0.35);
+}
+
+.race-lanes {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.race-lane {
+  flex: 1;
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 40px 1fr 150px;
+  align-items: center;
+  gap: 14px;
+}
+
+.race-rank {
+  font-family: var(--display);
+  font-size: 26px;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.race-strip {
+  position: relative;
+  height: 100%;
+  min-height: 46px;
+  border-radius: 12px;
+  border: 1px solid var(--line-soft);
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent calc(50% - 1px),
+      rgba(255, 255, 255, 0.05) calc(50% - 1px),
+      rgba(255, 255, 255, 0.05) 50%
+    ),
+    linear-gradient(90deg, #121214, #17171a);
+}
+
+.race-start {
+  position: absolute;
+  left: 5%;
+  top: 8%;
+  bottom: 8%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.race-finish {
+  position: absolute;
+  left: 92%;
+  top: 0;
+  bottom: 0;
+  width: 9px;
+  transform: translateX(-50%);
+  background: repeating-linear-gradient(0deg, #f4f4f5 0 6px, #0a0a0b 6px 12px);
+  opacity: 0.9;
+}
+
+.race-runner {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.race-ava {
+  display: grid;
+  place-items: center;
+  width: clamp(34px, 5.2vh, 46px);
+  height: clamp(34px, 5.2vh, 46px);
+  border-radius: 50%;
+  background: var(--c);
+  color: #000;
+  font-family: var(--display);
+  font-size: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.race-runner.leader .race-ava {
+  border-color: var(--volt);
+  box-shadow: 0 0 0 2px var(--volt), 0 0 18px rgba(215, 255, 30, 0.5);
+}
+
+.race-trail {
+  position: absolute;
+  right: 55%;
+  top: 50%;
+  width: 70px;
+  height: 14px;
+  transform: translateY(-50%);
+  border-radius: 8px;
+  background: linear-gradient(90deg, transparent, var(--c));
+  opacity: 0;
+  transition: opacity 0.3s;
+  filter: blur(2px);
+}
+
+.race.running .race-trail {
+  opacity: 0.55;
+}
+
+.race-info {
+  min-width: 0;
+}
+
+.race-name {
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.race-delta {
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 15px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.race-count {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  font-family: var(--display);
+  text-transform: uppercase;
+  font-size: clamp(72px, 19vh, 200px);
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  animation: countPop 0.85s ease forwards;
+}
+
+.race-count.ready {
+  color: #fff;
+}
+.race-count.set {
+  color: var(--orange);
+}
+.race-count.go {
+  color: var(--volt);
+  text-shadow: 0 0 50px rgba(215, 255, 30, 0.55);
+}
+
+@keyframes countPop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.7);
+  }
+  18% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+.race-replay {
+  align-self: center;
+  margin-top: 22px;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: var(--volt);
+  border: none;
+  color: #000;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.race-replay:hover {
+  filter: brightness(1.08);
+}
+
+/* Race — vertical (mobile) bottom-to-top variant */
+.race.vertical {
+  padding: 16px 14px 28px;
+}
+
+.vrace-track {
+  position: relative;
+  flex: 1;
+  min-height: 72vh;
+}
+
+.vrace-finish {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  right: 0;
+  height: 9px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(90deg, #f4f4f5 0 10px, #0a0a0b 10px 20px);
+  opacity: 0.9;
+  z-index: 2;
+}
+
+.vrace-finish-tag {
+  position: absolute;
+  top: calc(15% - 24px);
+  left: 14px;
+  z-index: 2;
+}
+
+.vrace-runner {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+}
+
+.race.vertical .race-ava {
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+  border-width: 1.5px;
+}
+
+.vrace-trail {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  width: 16px;
+  height: 64px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, var(--c), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+  filter: blur(2px);
+  z-index: -1;
+}
+
+.race.running .vrace-trail {
+  opacity: 0.5;
+}
+
+.vrace-delta {
+  margin-top: 5px;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  white-space: nowrap;
+}
+
 /* Head-to-head delta bars */
 .h2h {
   border: 1px solid var(--line);

@@ -3,6 +3,7 @@ import {
   ATHLETES,
   EVENTS,
   EventId,
+  RankedResult,
   bestTime,
   formatDelta,
   formatTime,
@@ -55,6 +56,7 @@ export default function Deltas() {
   // Convert each time gap into the real distance (in metres) the athlete would
   // be behind P1 at the moment P1 crosses the line: gap_m = leaderSpeed * delta.
   const [expanded, setExpanded] = useState(false)
+  const [racing, setRacing] = useState(false)
   const evRef = EVENTS.find((e) => e.id === event)!
   const raceMeters = parseFloat(evRef.short) || 0
   const leaderSpeed = leader ? raceMeters / leader.result.time : 0 // m/s
@@ -90,6 +92,11 @@ export default function Deltas() {
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
     }
+  }, [expanded])
+
+  // Reset to the map view whenever the modal is closed.
+  useEffect(() => {
+    if (!expanded) setRacing(false)
   }, [expanded])
 
   // Head-to-head: pick any two athletes, compared across every event.
@@ -223,60 +230,73 @@ export default function Deltas() {
           <div className="track-modal" role="dialog" aria-modal="true">
             <div className="track-modal-head">
               <div>
-                <div className="eyebrow">True Distance · gap behind P1 in metres</div>
+                <div className="eyebrow">
+                  {racing
+                    ? 'Race · ready, set, go'
+                    : 'True Distance · gap behind P1 in metres'}
+                </div>
                 <h3 className="display">{evRef.name}</h3>
               </div>
-              <button
-                className="track-modal-close"
-                onClick={() => setExpanded(false)}
-                aria-label="Close"
-                title="Close (Esc)"
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-                  <path d="M6 6l12 12M18 6L6 18" />
-                </svg>
-              </button>
+              <div className="track-modal-actions">
+                <button
+                  className={'track-race-btn' + (racing ? ' on' : '')}
+                  onClick={() => setRacing((r) => !r)}
+                >
+                  {racing ? '◂ Map view' : '▸ Race'}
+                </button>
+                <button
+                  className="track-modal-close"
+                  onClick={() => setExpanded(false)}
+                  aria-label="Close"
+                  title="Close (Esc)"
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             <div className="track-modal-scroll">
-              <div className="track track-tall" style={{ height: trackTall }}>
-                {/* finish line sits where P1 crossed (0 m) */}
-                <div className="finish" style={{ top: LEADER_Y, transform: 'translateY(-50%)' }} />
-                <div
-                  className="dist-label finish-zero"
-                  style={{ top: LEADER_Y }}
-                >
-                  0 m · P1
+              {racing ? (
+                <RaceView key={event} rows={rows} />
+              ) : (
+                <div className="track track-tall" style={{ height: trackTall }}>
+                  {/* finish line sits where P1 crossed (0 m) */}
+                  <div className="finish" style={{ top: LEADER_Y, transform: 'translateY(-50%)' }} />
+                  <div className="dist-label finish-zero" style={{ top: LEADER_Y }}>
+                    0 m · P1
+                  </div>
+
+                  {/* distance gridlines */}
+                  {gridLines.map((m) => (
+                    <div key={m} className="dist-grid" style={{ top: LEADER_Y + m * PX_PER_M }}>
+                      <span className="dist-grid-label">{m} m</span>
+                    </div>
+                  ))}
+
+                  {placedTrue.map((p, i) => (
+                    <div
+                      key={p.athlete.id}
+                      className={'runner' + (i === 0 ? ' leader' : '')}
+                      style={{ top: p.y, left: `${p.left}%`, ['--c' as string]: colorOf(p.athlete.id) }}
+                    >
+                      <div className="pin-avatar" title={p.athlete.name}>
+                        {p.athlete.initials}
+                      </div>
+                      <div className="pin-time">
+                        {i === 0 ? formatTime(p.result.time) : `+ ${p.delta.toFixed(3)}`}
+                      </div>
+                      <div className="pin-name">
+                        {p.athlete.name}
+                        {i > 0 && (
+                          <span className="pin-metres"> · {p.metres.toFixed(2)} m back</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-
-                {/* distance gridlines */}
-                {gridLines.map((m) => (
-                  <div key={m} className="dist-grid" style={{ top: LEADER_Y + m * PX_PER_M }}>
-                    <span className="dist-grid-label">{m} m</span>
-                  </div>
-                ))}
-
-                {placedTrue.map((p, i) => (
-                  <div
-                    key={p.athlete.id}
-                    className={'runner' + (i === 0 ? ' leader' : '')}
-                    style={{ top: p.y, left: `${p.left}%`, ['--c' as string]: colorOf(p.athlete.id) }}
-                  >
-                    <div className="pin-avatar" title={p.athlete.name}>
-                      {p.athlete.initials}
-                    </div>
-                    <div className="pin-time">
-                      {i === 0 ? formatTime(p.result.time) : `+ ${p.delta.toFixed(3)}`}
-                    </div>
-                    <div className="pin-name">
-                      {p.athlete.name}
-                      {i > 0 && (
-                        <span className="pin-metres"> · {p.metres.toFixed(2)} m back</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              )}
             </div>
           </div>
         )}
@@ -381,5 +401,171 @@ export default function Deltas() {
         </div>
       </div>
     </section>
+  )
+}
+
+// ---------------------------------------------------------------------------
+//  RaceView — READY/SET/GO, then everyone runs to the finish in their REAL time
+//  (an 11.25s 100m literally takes 11.25s), so the finishing gaps are the true
+//  gaps. Horizontal lanes on wide screens, bottom-to-top columns on mobile.
+// ---------------------------------------------------------------------------
+function RaceView({ rows }: { rows: RankedResult[] }) {
+  const [phase, setPhase] = useState<'ready' | 'set' | 'go' | 'run' | 'done'>('ready')
+  const [runId, setRunId] = useState(0)
+  const [clock, setClock] = useState(0) // stopwatch seconds
+
+  // Switch to the vertical (bottom-to-top) layout on narrow screens.
+  const [vertical, setVertical] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches,
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)')
+    const onChange = () => setVertical(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  const leaderTime = rows[0]?.result.time ?? 0
+  const data = rows.map((r) => ({ ...r, delta: r.result.time - leaderTime }))
+
+  // True time: each runner takes their actual result, in real seconds.
+  const durMs = (t: number) => t * 1000
+  const slowestTime = data.length ? data[data.length - 1].result.time : 0
+  const lastFinish = durMs(slowestTime)
+  const GO_DELAY = 2500 // ready + set + go before the runners move
+
+  useEffect(() => {
+    setPhase('ready')
+    setClock(0)
+    const t: number[] = []
+    t.push(window.setTimeout(() => setPhase('set'), 900))
+    t.push(window.setTimeout(() => setPhase('go'), 1800))
+    t.push(window.setTimeout(() => setPhase('run'), GO_DELAY))
+    t.push(window.setTimeout(() => setPhase('done'), GO_DELAY + lastFinish + 600))
+    return () => t.forEach(clearTimeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runId, lastFinish])
+
+  // Stopwatch: count up from GO, stop the instant the last athlete finishes.
+  useEffect(() => {
+    if (phase !== 'run') return
+    const start = performance.now()
+    let raf = 0
+    const tick = () => {
+      const el = (performance.now() - start) / 1000
+      if (el >= slowestTime) {
+        setClock(slowestTime) // freeze on the last finisher
+        return
+      }
+      setClock(el)
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [phase, slowestTime])
+
+  const running = phase === 'run' || phase === 'done'
+  const deltaText = (r: (typeof data)[number], i: number) =>
+    i === 0 ? formatTime(r.result.time) : `+ ${r.delta.toFixed(3)}`
+  const fmtClock = (s: number) => {
+    if (s >= 60) {
+      const m = Math.floor(s / 60)
+      return `${m}:${(s - m * 60).toFixed(2).padStart(5, '0')}`
+    }
+    return s.toFixed(2)
+  }
+
+  return (
+    <div className={'race' + (running ? ' running' : '') + (vertical ? ' vertical' : '')}>
+      {(phase === 'ready' || phase === 'set' || phase === 'go') && (
+        <div className={`race-count ${phase}`} key={`${phase}-${runId}`}>
+          {phase.toUpperCase()}
+        </div>
+      )}
+
+      <div className="race-clockbar">
+        <div className={'race-clock' + (phase === 'done' ? ' stopped' : '')}>
+          {fmtClock(clock)}
+          <span className="race-clock-unit">s</span>
+        </div>
+      </div>
+
+      {vertical ? (
+        /* ---------- Mobile: bottom-to-top columns ---------- */
+        <div className="vrace-track">
+          <div className="vrace-finish" />
+          <div className="vrace-finish-tag eyebrow">Finish</div>
+          {data.map((r, i) => (
+            <div
+              key={r.athlete.id}
+              className={'vrace-runner' + (i === 0 ? ' leader' : '')}
+              style={{
+                // spread columns within an inset band so edge runners aren't clipped
+                left: `${50 + (((i + 0.5) / data.length) - 0.5) * 84}%`,
+                top: running ? '14%' : '86%',
+                transition: running ? `top ${durMs(r.result.time)}ms linear` : 'none',
+                ['--c' as string]: colorOf(r.athlete.id),
+              }}
+            >
+              <span className="vrace-trail" />
+              <span className="race-ava">{r.athlete.initials}</span>
+              <span
+                className="vrace-delta"
+                style={{
+                  opacity: running ? 1 : 0,
+                  transitionDelay: running ? `${durMs(r.result.time)}ms` : '0ms',
+                  color: i === 0 ? 'var(--volt)' : colorOf(r.athlete.id),
+                }}
+              >
+                {i === 0 ? formatTime(r.result.time) : `+${r.delta.toFixed(2)}`}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        /* ---------- Desktop: left-to-right lanes ---------- */
+        <div className="race-lanes">
+          {data.map((r, i) => (
+            <div className="race-lane" key={r.athlete.id}>
+              <div className="race-rank">{i + 1}</div>
+              <div className="race-strip">
+                <span className="race-start" />
+                <span className="race-finish" />
+                <div
+                  className={'race-runner' + (i === 0 ? ' leader' : '')}
+                  style={{
+                    left: running ? '92%' : '5%',
+                    transition: running ? `left ${durMs(r.result.time)}ms linear` : 'none',
+                    ['--c' as string]: colorOf(r.athlete.id),
+                  }}
+                >
+                  <span className="race-trail" />
+                  <span className="race-ava">{r.athlete.initials}</span>
+                </div>
+              </div>
+              <div className="race-info">
+                <div className="race-name">{r.athlete.name}</div>
+                <div
+                  className="race-delta"
+                  style={{
+                    opacity: running ? 1 : 0,
+                    transitionDelay: running ? `${durMs(r.result.time)}ms` : '0ms',
+                    color: i === 0 ? 'var(--volt)' : colorOf(r.athlete.id),
+                  }}
+                >
+                  {deltaText(r, i)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {phase === 'done' && (
+        <button className="race-replay" onClick={() => setRunId((x) => x + 1)}>
+          ↻ Replay
+        </button>
+      )}
+    </div>
   )
 }
